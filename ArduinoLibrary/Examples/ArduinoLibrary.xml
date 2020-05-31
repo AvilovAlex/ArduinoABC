@@ -94,7 +94,7 @@
             Фильтрующая погрешность, на изменение которой не будут приходить события
             </summary>
         </member>
-        <member name="P:ArduinoLibrary.Arduino.Threshold">
+        <member name="P:ArduinoLibrary.Arduino.Delta">
             <summary>
             Фильтрующая погрешность, на изменение которой не будут приходить события
             </summary>
@@ -178,7 +178,7 @@
             Конструктор класса с режимом автоматического поиска 
             </summary>
             <param name="comPort">COM-порт в формате COM\d</param>
-            <param name="threshold">Погрешность измерения аналогого сигнала</param>
+            <param name="delta">Погрешность измерения аналогого сигнала</param>
             <param name="logMode">Вкл/Отк режима логировния аварийных сообщений</param>
         </member>
         <member name="M:ArduinoLibrary.Arduino.SetAnalogReportMode(System.Boolean)">

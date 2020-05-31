@@ -108,7 +108,7 @@ namespace ArduinoLibrary
         /// <summary>
         /// Фильтрующая погрешность, на изменение которой не будут приходить события
         /// </summary>
-        public int Delta { get => threshold; set => threshold = (value > 0) && (value < 100) ? threshold : 10; }
+        public int Threshold { get => threshold; set => threshold = (value > 0) && (value < 100) ? value : 10; }
 
         /// <summary>
         /// Делегат события изменения состояния аналогого входа
@@ -262,12 +262,12 @@ namespace ArduinoLibrary
         /// Конструктор класса с режимом автоматического поиска 
         /// </summary>
         /// <param name="comPort">COM-порт в формате COM\d</param>
-        /// <param name="delta">Погрешность измерения аналогого сигнала</param>
+        /// <param name="threshold">Погрешность измерения аналогого сигнала</param>
         /// <param name="logMode">Вкл/Отк режима логировния аварийных сообщений</param>
-        public Arduino(string comPort = "auto", int delta = 10, bool logMode = false)
+        public Arduino(string comPort = "auto", int threshold = 10, bool logMode = false)
         {
             LogMode = logMode;
-            Delta = delta;
+            Threshold = threshold;
 
             connectInfo = GetConnectionInfo(comPort);
             driver = new FirmataVB
@@ -314,7 +314,7 @@ namespace ArduinoLibrary
         {
             //Так как Firmata пыосылает события не только на фактические изменения состояния входов
             //Необходимо отфильтровать помехи сообщений
-            if (Math.Abs(analogPinState[pin].pinValue - value) > Delta)
+            if (Math.Abs(analogPinState[pin].pinValue - value) > Threshold)
             {
                 analogPinState[pin] = new AnalogPinStateStruct(value, analogPinState[pin].pinMode);
                 if (AnalogPinChanged != null)
@@ -377,7 +377,7 @@ namespace ArduinoLibrary
         /// </summary>
         /// <param name="pin">Номер выхода</param>
         /// <returns></returns>
-        private bool PwmPred(int pin)
+        public bool PwmPred(int pin)
         {
             return (pin == 3) ||
                 (pin == 5) ||
