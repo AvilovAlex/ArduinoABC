@@ -6,8 +6,6 @@ const
   xPin = 0;
   ///Номер пина, к которому подключен выход движения джойстика HW-504 по оси Y
   yPin = 1;
-  ///
-  delta = 10;
 
 var
   ggg: Group3D;
@@ -15,17 +13,14 @@ var
 //Обработчик события нажатия на кнопку
 procedure MakeRotate(pin: integer; value: integer);
 begin
-  
   var delta := value - 512;
-  var fx := 0;
-  var fy := 0;
-  case pin of
-    //Инверсия необходима из-за того, что джойстик HW-504 инвертирован по оси Y
-    yPin: fy := delta;
-    xPin: fx := delta;
+  if (Abs(delta) > 10) then
+  begin
+    case pin of
+      yPin: ggg.AnimRotate(OrtX, -delta / 100, 0.5).Begin;
+      xPin: ggg.AnimRotate(OrtZ, delta / 100, 0.5).Begin;
+    end;
   end;
-  
-  ggg.AnimRotate(OrtZ, fx / 10, 0.5).Begin;
 end;
 
 function MultipleClones(c: Object3D; N: integer): Group3D;
@@ -47,6 +42,10 @@ begin
   //Инициализация экземпляра Arduino
   var myUno := new Arduino('COM4');
   
+  myUno.setPinMode(xPin, AnalogInput);
+  myUno.setPinMode(yPin, AnalogInput);
+  
+  
   var b := Box(0, 0, 2, 14.5, 1, 4, Colors.Orange);
   var c := Cube(6.75, 0, 4.5, 1, RandomColor);
   var c1 := Cone(6.75, 0, 5, 1.5, 0.4, RandomColor);
@@ -61,16 +60,11 @@ begin
   ggg := Group(gg, g1, g2, g3);
   ggg.Save('Замок.xaml');
   
-  var predFx := 0;
-  var predFy := 0;
-  
   while (true) do
   begin
     var fx := myUno.AnalogRead(xPin);
-    if (Abs(fx - predFx) > delta) then
     MakeRotate(xPin, fx);
     var fy := myUno.AnalogRead(yPin);
-    if (Abs(fy - predFy) > delta) then
     MakeRotate(yPin, fy);
     sleep(10);
   end;
